@@ -1,0 +1,16 @@
+{% load static %}
+
+{% for service in services %}
+<div class="col-md-3">
+    <div class="card h-100 text-center">
+        <img src="{% static service.img %}" class="card-img-top" alt="{{ service.name }}">
+        <div class="card-body">
+            <h5 class="card-title">{{ service.name }}</h5>
+            <p class="card-text text-muted small mb-2">{{ service.short }}</p>
+            <p class="card-text">{{ service.desc }}</p>
+            <a href="{% url 'booking_create' service_id=service.id %}" class="btn btn-primary btn-sm">Book Now</a>
+        </div>
+    </div>
+</div>
+{% endfor %}
+

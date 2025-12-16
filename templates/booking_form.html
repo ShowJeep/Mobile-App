@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-5" style="max-width: 650px;">
+  <button onclick="history.back()" class="btn btn-outline-secondary mb-3">
+    ← Back
+</button>
+    <div class="card shadow-lg p-4 border-0 rounded-4">
+        <h3 class="text-center mb-4 fw-bold">
+            Book <span class="text-primary">{{ service.name }}</span>
+        </h3>
+
+        <form method="POST" id="bookingForm">
+            {% csrf_token %}
+
+            <!-- Address -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Address</label>
+                <textarea name="address" id="address"
+                    class="form-control form-control-lg"
+                    rows="3"
+                    placeholder="Enter your address"></textarea>
+            </div>
+
+            <!-- Date & Time -->
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Preferred Date</label>
+                    <input type="date"
+                           name="preferred_date"
+                           id="preferred_date"
+                           class="form-control form-control-lg">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Preferred Time</label>
+                    <input type="time"
+                           name="preferred_time"
+                           id="preferred_time"
+                           class="form-control form-control-lg"
+                           disabled>
+                </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Notes (Optional)</label>
+                <textarea name="notes"
+                    id="notes"
+                    class="form-control form-control-lg"
+                    rows="3"
+                    placeholder="Optional notes"></textarea>
+            </div>
+
+            <button type="submit"
+                class="btn btn-success btn-lg w-100 rounded-3 shadow-sm">
+                Confirm Booking
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const dateInput = document.getElementById("preferred_date");
+    const timeInput = document.getElementById("preferred_time");
+    const form = document.getElementById("bookingForm");
+
+    // Set minimum date = today
+    const today = new Date().toISOString().split("T")[0];
+    dateInput.setAttribute("min", today);
+
+    // Enable time only after date is selected
+    dateInput.addEventListener("change", function () {
+        timeInput.disabled = false;
+
+        const selectedDate = dateInput.value;
+        const now = new Date();
+        const currentTime = now.toTimeString().slice(0, 5);
+
+        if (selectedDate === today) {
+            timeInput.min = currentTime;
+        } else {
+            timeInput.removeAttribute("min");
+        }
+    });
+
+    // Form validation
+    form.addEventListener("submit", function (e) {
+        let errors = [];
+
+        if (!document.getElementById("address").value.trim()) {
+            errors.push("Address is required");
+        }
+
+        if (!dateInput.value) {
+            errors.push("Please select a date");
+        }
+
+        if (!timeInput.value) {
+            errors.push("Please select a time");
+        }
+
+        if (errors.length > 0) {
+            e.preventDefault();
+            alert(errors.join("\n"));
+        }
+    });
+});
+</script>
+
+{% endblock %}

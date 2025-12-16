@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2 class="fw-bold text-center mb-5">Service Categories</h2>
+
+<div class="row g-4">
+
+{% for category in categories %}
+<div class="col-sm-6 col-md-4 col-lg-3">
+    <a href="{% url 'service_list' category.id %}" class="text-decoration-none">
+        <div class="card shadow-sm rounded-4 text-center h-100 p-4 hover-effect">
+            {% if category.image %}
+                <img src="{{ category.image.url }}" class="card-img-top mb-3 rounded-3" style="height:150px; object-fit:cover;">
+            {% else %}
+                <img src="{% static 'default_category.jpg' %}" class="card-img-top mb-3 rounded-3" style="height:150px; object-fit:cover;">
+            {% endif %}
+            <h5 class="fw-bold text-primary">{{ category.name }}</h5>
+        </div>
+    </a>
+</div>
+{% endfor %}
+
+</div>
+
+<style>
+    .card.hover-effect {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+        background-color: #ffffff;
+    }
+
+    .card.hover-effect:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-img-top {
+        object-fit: cover;
+    }
+
+    @media (max-width: 576px) {
+        .card.hover-effect {
+            padding: 2rem 1rem;
+        }
+    }
+</style>
+
+{% endblock %}

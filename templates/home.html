@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+  body {
+    background-color: #f8f9fa;
+  }
+
+  .hero {
+    background: linear-gradient(120deg, #1e806fff, #85ceddff);
+    color: white;
+    border-radius: 1rem;
+    padding: 3rem 2rem;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    max-width: 1100px;
+    margin: 0 auto 2rem auto;
+  }
+
+  .category-card {
+    border: none;
+    border-radius: 1rem;
+    background-color: #ffffff;
+    box-shadow: 0 4px 10px #00000014;
+    transition: 0.3s ease;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  .category-card img {
+    border-radius: 1rem 1rem 0 0;
+    height: 180px;
+    object-fit: cover;
+    width: 100%;
+  }
+
+  .category-card-body {
+    padding: 1rem 1rem 2rem 1rem;
+    text-align: center;
+    margin-top: auto;
+  }
+
+  .category-card-body h5 {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .category-card-body p {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-bottom: 1rem;
+  }
+
+  .category-card-body .btn {
+    width: 100%;
+  }
+
+  .categories-container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+</style>
+
+<div class="container mt-5">
+
+  <!-- Hero Section -->
+  <div class="hero mb-5">
+    <h1 class="display-5 fw-bold">Welcome to ToolBox</h1>
+    <p class="lead">Your one-stop solution for fixing things efficiently and reliably.</p>
+  </div>
+
+  <!-- Service Categories Grid -->
+  <div class="categories-container">
+    <div class="row g-4 justify-content-center">
+      {% for category in categories %}
+        <div class="col-12 col-sm-6 col-md-4"> <!-- 3 per row on md+ screens -->
+          <div class="category-card shadow-sm h-100">
+            {% if category.image %}
+              <img src="{{ category.image.url }}" alt="{{ category.name }}">
+            {% else %}
+              <img src="{% static 'default_category.jpg' %}" alt="{{ category.name }}">
+            {% endif %}
+            <div class="category-card-body">
+              <h5>{{ category.name }}</h5>
+              {% if category.description %}
+                <p>{{ category.description|truncatewords:20 }}</p>
+              {% endif %}
+              <a href="{% url 'service_list' category.id %}" class="btn btn-primary">View Category</a>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p class="text-center">No categories available at the moment.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

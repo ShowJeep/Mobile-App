@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container my-5">
+
+    <h2 class="fw-bold mb-4 text-center text-primary">Admin Dashboard</h2>
+
+    <!-- ================= BOOKINGS ================= -->
+    <h4 class="fw-bold mb-3">Bookings</h4>
+
+    <div class="row g-4">
+        {% for b in bookings %}
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card shadow-sm h-100 rounded-4 border border-secondary p-3">
+
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="mb-0 text-primary">{{ b.service.name }}</h5>
+
+                    {% if b.status == "Done" %}
+                        <span class="badge bg-success">Done</span>
+                    {% elif b.status == "Assigned" %}
+                        <span class="badge bg-info text-dark">Assigned</span>
+                    {% else %}
+                        <span class="badge bg-warning text-dark">Pending</span>
+                    {% endif %}
+                </div>
+
+                <p class="mb-1"><strong>User:</strong> {{ b.user.get_full_name }}</p>
+                <p class="mb-1"><strong>Address:</strong> {{ b.address }}</p>
+                <p class="mb-1"><strong>Date & Time:</strong> {{ b.preferred_date }} | {{ b.preferred_time }}</p>
+
+                <p class="mb-1">
+                    <strong>Technician:</strong>
+                    {% if b.technician %}
+                        {{ b.technician.name }}
+                    {% else %}
+                        <span class="text-danger">Not Assigned</span>
+                    {% endif %}
+                </p>
+
+                <p class="mb-2"><strong>Notes:</strong> {{ b.notes|default:"-" }}</p>
+
+                <!-- ================= ACTIONS ================= -->
+                <div class="d-grid gap-2">
+
+                    <!-- ASSIGN / CHANGE TECH -->
+                    {% if b.status != "Done" %}
+                    <form method="POST" onsubmit="return validateTech(this)">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="assign_tech">
+                        <input type="hidden" name="booking_id" value="{{ b.id }}">
+
+                        <select name="tech" class="form-select form-select-sm mb-1">
+                            <option value="">Select Technician</option>
+                            {% for t_stat in tech_stats %}
+                                {% if t_stat.technician.role.id == b.service.category.id %}
+                                    <option value="{{ t_stat.technician.id }}"
+                                        {% if b.technician and b.technician.id == t_stat.technician.id %}selected{% endif %}>
+                                        {{ t_stat.technician.name }}
+                                    </option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+
+                        {% if b.technician %}
+                            <button type="submit"
+                                    class="btn btn-pink btn-sm w-100">
+                                Assigned / Change
+                            </button>
+                        {% else %}
+                            <button type="submit"
+                                    class="btn btn-success btn-sm w-100">
+                                Assign / Change
+                            </button>
+                        {% endif %}
+                    </form>
+                    {% endif %}
+
+                    <!-- SERVICE DONE -->
+                    {% if b.status == "Done" %}
+                        <button class="btn btn-secondary btn-sm w-100" disabled>
+                            Service Done
+                        </button>
+                    {% else %}
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="mark_done">
+                            <input type="hidden" name="booking_id" value="{{ b.id }}">
+                            <button type="submit" class="btn btn-primary btn-sm w-100">
+                                Mark Done
+                            </button>
+                        </form>
+                    {% endif %}
+
+                </div>
+
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center text-muted">No bookings found.</div>
+        {% endfor %}
+    </div>
+
+    <hr class="my-5">
+
+    <!-- ================= TECHNICIANS ================= -->
+    <h4 class="fw-bold mb-3">Technicians</h4>
+
+    <div class="row g-4">
+        {% for t_stat in tech_stats %}
+        <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="card shadow-sm rounded-4 border p-3 text-center hover-shadow">
+                <h5 class="text-primary">{{ t_stat.technician.name }}</h5>
+                <p><strong>Category:</strong> {{ t_stat.technician.role.name }}</p>
+                <p><strong>Phone:</strong> {{ t_stat.technician.phone }}</p>
+                <p><strong>Tasks Done:</strong> {{ t_stat.total_tasks }}</p>
+                <p><strong>Total Earned:</strong> ${{ t_stat.total_earned }}</p>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center text-muted">No technicians available.</div>
+        {% endfor %}
+    </div>
+
+    <hr class="my-5">
+
+    <!-- ================= ADD TECHNICIAN ================= -->
+    <h4 class="fw-bold mb-3">Add Technician</h4>
+
+    <form method="POST" class="row g-3">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="add_tech">
+
+        <div class="col-md-4">
+            <input type="text" name="name" class="form-control form-control-lg"
+                   placeholder="Technician Name" required>
+        </div>
+
+        <div class="col-md-4">
+            <select name="role" class="form-select form-select-lg" required>
+                {% for c in categories %}
+                    <option value="{{ c.id }}">{{ c.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <input type="text" name="phone" class="form-control form-control-lg"
+                   placeholder="Phone Number" required>
+        </div>
+
+        <div class="col-12">
+            <button class="btn btn-primary btn-lg w-100">Add Technician</button>
+        </div>
+    </form>
+
+</div>
+
+<!-- ================= STYLES ================= -->
+<style>
+    .hover-shadow:hover {
+        box-shadow: 0 10px 22px rgba(0,0,0,0.2);
+        transition: 0.3s ease;
+    }
+
+    .btn-pink {
+        background-color: #e83e8c;
+        color: white;
+        border: none;
+    }
+
+    .btn-pink:hover {
+        background-color: #d63384;
+        color: white;
+    }
+</style>
+
+<!-- ================= JS ================= -->
+<script>
+function validateTech(form) {
+    const tech = form.querySelector("select[name='tech']").value;
+    if (!tech) {
+        alert("Please select a technician before assigning.");
+        return false;
+    }
+    return true;
+}
+</script>
+
+{% endblock %}

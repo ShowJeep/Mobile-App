@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container my-5">
+    <button onclick="history.back()" class="btn btn-outline-secondary mb-3">
+    ← Back
+    </button>
+    <div class="card shadow-sm mx-auto" style="max-width: 600px;">
+        <div class="card-header bg-success text-white text-center">
+            <h4 class="mb-0">Write a Review</h4>
+        </div>
+        <div class="card-body">
+            <p class="lead text-center mb-4">Your review for <strong>{{ booking.service.name }}</strong></p>
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <textarea name="review" class="form-control form-control-lg" rows="5" placeholder="Share your experience..." required></textarea>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success btn-lg px-5">Submit Review</button>
+                    <a href="{% url 'profile' %}" class="btn btn-secondary btn-lg px-5 ms-2">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container my-5">
+    <div class="card shadow-sm mx-auto" style="max-width: 600px;">
+        <div class="card-header bg-danger text-white text-center">
+            <h4 class="mb-0">Cancel Booking</h4>
+        </div>
+        <div class="card-body text-center">
+            <p class="lead">Are you sure you want to cancel the booking for</p>
+            <h5 class="fw-bold">{{ booking.service.name }}</h5>
+            <p class="mb-4">Scheduled on <strong>{{ booking.preferred_date }}</strong> at <strong>{{ booking.preferred_time }}</strong></p>
+
+            <form method="POST" class="d-flex justify-content-center gap-3">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger px-4">Yes, Cancel</button>
+                <a href="{% url 'profile' %}" class="btn btn-secondary px-4">No, Go Back</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
