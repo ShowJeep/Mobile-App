@@ -27,6 +27,7 @@ outcome
 packaging
 pefile
 pip
+pillow
 platformdirs
 protobuf
 proxy_tools
