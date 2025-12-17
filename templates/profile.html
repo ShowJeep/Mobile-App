@@ -6,19 +6,26 @@
 <button onclick="history.back()" class="btn btn-outline-secondary mb-3">
     ← Back
 </button>
+
 <!-- User Info Card -->
 <div class="card mb-4 shadow-lg p-3 border-0 rounded-4">
     <div class="card-body d-flex flex-column flex-md-row align-items-center">
         <div class="me-md-4 text-center mb-3 mb-md-0">
-            <img src="{% static 'avatar.jpg' %}" alt="User Avatar" class="rounded-circle border border-2 border-primary" width="120" height="120">
+            <img src="{% static 'avatar.jpg' %}" alt="User Avatar"
+                 class="rounded-circle border border-2 border-primary"
+                 width="120" height="120">
         </div>
         <div>
             <h3 class="fw-bold mb-1">{{ user.get_full_name|default:user.username }}</h3>
             <p class="mb-1"><strong>Email:</strong> {{ user.email }}</p>
             <p class="mb-0"><strong>Joined:</strong> {{ user.date_joined|date:"F j, Y" }}</p>
             <div class="mt-3">
-                <a href="{% url 'edit_profile' %}" class="btn btn-primary btn-sm me-2 shadow-sm">Edit Profile</a>
-                <a href="{% url 'change_password' %}" class="btn btn-warning btn-sm shadow-sm">Change Password</a>
+                <a href="{% url 'edit_profile' %}" class="btn btn-primary btn-sm me-2 shadow-sm">
+                    Edit Profile
+                </a>
+                <a href="{% url 'change_password' %}" class="btn btn-warning btn-sm shadow-sm">
+                    Change Password
+                </a>
             </div>
         </div>
     </div>
@@ -45,6 +52,7 @@
             <tr>
                 <td>{{ b.service.name }}</td>
                 <td>${{ b.service.price|floatformat:2 }}</td>
+
                 <td>
                     {% if b.status == "Pending" %}
                         <span class="badge bg-warning text-dark">{{ b.status }}</span>
@@ -54,7 +62,9 @@
                         <span class="badge bg-success">{{ b.status }}</span>
                     {% endif %}
                 </td>
+
                 <td>{{ b.created_at|date:"d M, Y" }}</td>
+
                 <td>
                     {% if b.technician %}
                         {{ b.technician.name }}
@@ -62,23 +72,34 @@
                         <span class="text-muted">-</span>
                     {% endif %}
                 </td>
+
                 <!-- Review -->
                 <td>
                     {% if b.status == "Done" %}
                         {% if b.review %}
                             <span class="text-success fw-bold">{{ b.review }}</span>
                         {% else %}
-                            <a href="{% url 'add_review' b.id %}" class="btn btn-sm btn-info shadow-sm">Write Review</a>
+                            <a href="{% url 'add_review' b.id %}"
+                               class="btn btn-sm btn-info shadow-sm">
+                                Write Review
+                            </a>
                         {% endif %}
                     {% else %}
                         <span class="text-muted">-</span>
                     {% endif %}
                 </td>
-                <!-- Actions -->
+
+                <!-- ✅ FIXED ACTIONS -->
                 <td>
-                    {% if not b.technician %}
-                        <a href="{% url 'booking_edit' b.id %}" class="btn btn-sm btn-warning mb-1 shadow-sm">Edit</a>
-                        <a href="{% url 'booking_cancel' b.id %}"class="btn btn-sm btn-danger mb-1 shadow-sm">Cancel</a>
+                    {% if b.status != "Done" and not b.technician %}
+                        <a href="{% url 'booking_edit' b.id %}"
+                           class="btn btn-sm btn-warning mb-1 shadow-sm">
+                            Edit
+                        </a>
+                        <a href="{% url 'booking_cancel' b.id %}"
+                           class="btn btn-sm btn-danger mb-1 shadow-sm">
+                            Cancel
+                        </a>
                     {% else %}
                         <span class="text-muted">Locked</span>
                     {% endif %}
@@ -86,7 +107,9 @@
             </tr>
         {% empty %}
             <tr>
-                <td colspan="7" class="text-center text-muted">No bookings found.</td>
+                <td colspan="7" class="text-center text-muted">
+                    No bookings found.
+                </td>
             </tr>
         {% endfor %}
         </tbody>
