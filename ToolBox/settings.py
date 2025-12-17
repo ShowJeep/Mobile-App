@@ -27,6 +27,13 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
+# CSRF settings for Capacitor mobile app
+CSRF_TRUSTED_ORIGINS = [
+    "https://toolbox-zg87.onrender.com",
+]
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
 
 # Application definition
 
@@ -121,7 +128,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static",
-    ]
+]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media/'
